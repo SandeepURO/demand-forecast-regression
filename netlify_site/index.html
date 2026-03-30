@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demand Forecast Web App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+      <p class="kicker">Netlify Frontend</p>
+      <h1>Demand Forecast</h1>
+      <p class="lead">This frontend is hosted on Netlify and calls your Flask API endpoint.</p>
+
+      <form id="predict-form" class="grid">
+        <label>
+          Backend API URL
+          <input id="api-url" type="url" required placeholder="https://your-backend-url.com/api/predict">
+        </label>
+
+        <label>
+          Warehouse (encoded)
+          <input id="warehouse" type="number" min="0" max="3" required value="0">
+        </label>
+
+        <label>
+          Category (encoded)
+          <input id="category" type="number" min="0" max="32" required value="0">
+        </label>
+
+        <label>
+          Product (encoded)
+          <input id="product" type="number" min="0" max="2159" required value="0">
+        </label>
+
+        <label>
+          Date
+          <input id="date" type="date" required>
+        </label>
+
+        <button type="submit">Predict</button>
+      </form>
+
+      <section id="result" class="result hidden"></section>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

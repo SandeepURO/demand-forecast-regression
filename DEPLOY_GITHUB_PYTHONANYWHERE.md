@@ -57,3 +57,22 @@ Your live URL will be:
 
 - Keep these files in repo root for app startup: `app.py`, `requirements.txt`, `Historical Product Demand.csv`, `demand_forecast_rf_model.pkl`.
 - `scikit-learn` is pinned to avoid model version mismatch warnings.
+
+## D) Netlify Frontend Deploy
+
+Netlify can host the frontend, but your ML prediction API must run on a backend host (PythonAnywhere/Render/Railway).
+
+1. In Netlify, choose **Add new site** -> **Import an existing project**.
+2. Connect your GitHub repo: `SandeepURO/demand-forecast-regression`.
+3. Set build settings:
+   - Build command: *(leave empty)*
+   - Publish directory: `netlify_site`
+4. Deploy site.
+5. Open your Netlify URL and use your backend endpoint in this format:
+   - `https://<your-backend-domain>/api/predict`
+
+Optional: in Netlify Project settings -> Environment variables, add:
+
+- `PREDICT_API_URL=https://<your-backend-domain>/api/predict`
+
+Then we can update frontend JS to auto-read this value at build time.

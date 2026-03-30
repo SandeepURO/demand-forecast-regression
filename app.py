@@ -5,7 +5,7 @@ from time import perf_counter
 import joblib
 import numpy as np
 import pandas as pd
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, render_template, request
 
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR / "demand_forecast_rf_model.pkl"
@@ -59,6 +59,21 @@ CATEGORY_OPTIONS = list(CATEGORY_MAP.keys())
 PRODUCT_OPTIONS = list(PRODUCT_MAP.keys())
 
 
+def predict_from_encoded(
+    warehouse_encoded: int, category_encoded: int, product_encoded: int, date_str: str
+) -> tuple[float, float]:
+    date_encoded = int(pd.Timestamp(date_str).timestamp())
+    new_input = np.array(
+        [[warehouse_encoded, category_encoded, product_encoded, date_encoded]]
+    )
+
+    start = perf_counter()
+    log_prediction = rf_model.predict(new_input)[0]
+    latency_ms = (perf_counter() - start) * 1000
+    prediction = max(0.0, float(np.expm1(log_prediction)))
+    return prediction, latency_ms
+
+
 @app.route("/", methods=["GET", "POST"])
 def predict_page():
     prediction = None
@@ -89,17 +104,9 @@ def predict_page():
             warehouse_encoded = WAREHOUSE_MAP[selected_warehouse]
             category_encoded = CATEGORY_MAP[selected_category]
             product_encoded = PRODUCT_MAP[selected_product]
-            date_encoded = int(pd.Timestamp(date_str).timestamp())
-
-            new_input = np.array(
-                [[warehouse_encoded, category_encoded, product_encoded, date_encoded]]
+            prediction, latency_ms = predict_from_encoded(
+                warehouse_encoded, category_encoded, product_encoded, date_str
             )
-
-            start = perf_counter()
-            log_prediction = rf_model.predict(new_input)[0]
-            latency_ms = (perf_counter() - start) * 1000
-
-            prediction = max(0.0, float(np.expm1(log_prediction)))
         except Exception as exc:
             error = str(exc)
 
@@ -116,6 +123,34 @@ def predict_page():
         selected_product=selected_product,
         date_str=date_str,
     )
+
+
+@app.route("/api/predict", methods=["POST"])
+def predict_api():
+    payload = request.get_json(silent=True) or {}
+
+    try:
+        warehouse = int(payload.get("warehouse"))
+        category = int(payload.get("category"))
+        product = int(payload.get("product"))
+        date_str = str(payload.get("date", "")).strip()
+
+        if not date_str:
+            raise ValueError("date is required in YYYY-MM-DD format")
+
+        prediction, latency_ms = predict_from_encoded(
+            warehouse, category, product, date_str
+        )
+
+        return jsonify(
+            {
+                "predicted_demand": int(round(prediction)),
+                "predicted_demand_raw": prediction,
+                "latency_ms": round(latency_ms, 2),
+            }
+        )
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 400
 
 
 if __name__ == "__main__":
