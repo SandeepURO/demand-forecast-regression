@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demand Forecast Frontend</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <main class="page">
+    <section class="card">
+      <p class="eyebrow">ML Demand Forecast</p>
+      <h1>Predict Product Demand</h1>
+      <p class="subtext">Choose values from your trained categories and get instant forecast from the Random Forest model.</p>
+
+      <form method="post" class="form-grid">
+        <label>
+          Warehouse
+          <select name="warehouse" required>
+            {% for option in warehouse_options %}
+            <option value="{{ option }}" {% if option == selected_warehouse %}selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          Product Category
+          <select name="category" required>
+            {% for option in category_options %}
+            <option value="{{ option }}" {% if option == selected_category %}selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          Product Code
+          <select name="product" required>
+            {% for option in product_options %}
+            <option value="{{ option }}" {% if option == selected_product %}selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label>
+          Date
+          <input type="date" name="date" value="{{ date_str }}" required>
+        </label>
+
+        <button type="submit">Predict Demand</button>
+      </form>
+
+      {% if prediction is not none %}
+      <div class="result ok">
+        <h2>Predicted Demand</h2>
+        <p class="big-number">{{ prediction|round|int }} units</p>
+        <p class="meta">Model inference time: {{ "%.2f"|format(latency_ms) }} ms</p>
+      </div>
+      {% endif %}
+
+      {% if error %}
+      <div class="result error">
+        <h2>Input Error</h2>
+        <p>{{ error }}</p>
+      </div>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

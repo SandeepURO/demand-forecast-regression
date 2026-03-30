@@ -1,0 +1,157 @@
+:root {
+  --bg-start: #f4f1de;
+  --bg-end: #dff3e4;
+  --ink: #1c1d21;
+  --card: #ffffffcc;
+  --accent: #e07a5f;
+  --accent-dark: #c05c3f;
+  --line: #0000001f;
+  --ok: #2a9d8f;
+  --error: #b00020;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at 10% 10%, #faedcd 0%, transparent 28%),
+              radial-gradient(circle at 88% 85%, #bde0fe 0%, transparent 24%),
+              linear-gradient(130deg, var(--bg-start), var(--bg-end));
+}
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: min(820px, 100%);
+  border: 1px solid var(--line);
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: 0 20px 50px #0000001a;
+  animation: rise 520ms ease-out;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  margin: 0;
+  color: #5e6472;
+}
+
+h1 {
+  margin: 8px 0 12px;
+  font-family: "DM Serif Display", serif;
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.05;
+}
+
+.subtext {
+  margin: 0 0 22px;
+  color: #3d405b;
+}
+
+.form-grid {
+  display: grid;
+  gap: 14px;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  font-weight: 600;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+button {
+  margin-top: 4px;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-weight: 700;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+
+button:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.result {
+  margin-top: 20px;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+}
+
+.result h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.result.ok {
+  border-color: #2a9d8f59;
+  background: #2a9d8f14;
+}
+
+.result.error {
+  border-color: #b0002059;
+  background: #b0002012;
+}
+
+.big-number {
+  margin: 2px 0;
+  font-size: clamp(28px, 6vw, 44px);
+  font-weight: 700;
+}
+
+.meta {
+  margin: 4px 0 0;
+  color: #555;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+}
